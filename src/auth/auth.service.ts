@@ -1,15 +1,27 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from 'src/user/schemas/user.schema';
+import { User } from '../user/schemas/user.schema';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
+import { BcryptService } from '../_core/services/bcrypt.service';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private bcryptService: BcryptService,
+  ) {}
   async signup(dto: SignupDto) {
-    const user = new this.userModel(dto);
+    const isExists = await this.userModel.findOne({ email: dto.email });
+    if (isExists) {
+      throw new BadRequestException('Cannot use these credentials');
+    }
+    const newUser = {
+      ...dto,
+      password: await this.bcryptService.hash(dto.password),
+    };
+    const user = new this.userModel(newUser);
     const response = await user.save();
     return response;
   }
@@ -19,14 +31,17 @@ export class AuthService {
     if (!existsUser) {
       throw new BadRequestException('Invalid Credentials');
     }
-    const isMatches = this.validatePassword(dto.password, existsUser.password);
+    const isMatches = await this.validatePassword(
+      dto.password,
+      existsUser.password,
+    );
     if (!isMatches) {
       throw new BadRequestException('Invalid Credentials');
     }
     return true;
   }
 
-  private validatePassword(inputPass: string, userPass: string) {
-    return inputPass === userPass;
+  private async validatePassword(inputPass: string, userPass: string) {
+    return this.bcryptService.compare(inputPass, userPass);
   }
 }
