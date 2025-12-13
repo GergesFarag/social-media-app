@@ -5,14 +5,18 @@ import { User } from '../user/schemas/user.schema';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { BcryptService } from '../_core/services/bcrypt.service';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from 'src/types/jwtPayload';
+import { LoginResponseDto } from './dto/login-response.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private bcryptService: BcryptService,
+    private jwtService: JwtService,
   ) {}
-  async signup(dto: SignupDto) {
+  async signup(dto: SignupDto): Promise<LoginResponseDto> {
     const isExists = await this.userModel.findOne({ email: dto.email });
     if (isExists) {
       throw new BadRequestException('Cannot use these credentials');
@@ -23,10 +27,16 @@ export class AuthService {
     };
     const user = new this.userModel(newUser);
     const response = await user.save();
-    return response;
+    const JWTPayload: JwtPayload = {
+      id: response._id.toString(),
+      email: response.email,
+      role: response.role,
+    };
+    const JWT = this.jwtService.sign(JWTPayload);
+    return { accessToken: JWT };
   }
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto): Promise<LoginResponseDto> {
     const existsUser = await this.userModel.findOne({ email: dto.email });
     if (!existsUser) {
       throw new BadRequestException('Invalid Credentials');
@@ -38,7 +48,13 @@ export class AuthService {
     if (!isMatches) {
       throw new BadRequestException('Invalid Credentials');
     }
-    return true;
+    const JWTPayload: JwtPayload = {
+      id: existsUser._id.toString(),
+      email: existsUser.email,
+      role: existsUser.role,
+    };
+    const JWT = this.jwtService.sign(JWTPayload);
+    return { accessToken: JWT };
   }
 
   private async validatePassword(inputPass: string, userPass: string) {

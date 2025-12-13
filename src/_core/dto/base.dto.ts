@@ -1,7 +1,7 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 
 export abstract class BaseDto {
-  @Type(() => String)
   @Expose()
+  @Transform(({ obj }) => obj?._id.toString())
   _id: string;
 }
