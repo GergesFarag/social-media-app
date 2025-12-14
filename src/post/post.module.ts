@@ -19,5 +19,6 @@ import { CloudModule } from 'src/cloud/cloud.module';
   ],
   controllers: [PostController],
   providers: [PostService, UserService],
+  exports: [PostService],
 })
 export class PostModule {}

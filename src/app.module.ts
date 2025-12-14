@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PostModule } from './post/post.module';
 import { CloudModule } from './cloud/cloud.module';
+import { ReactionModule } from './reaction/reaction.module';
 import helmet from 'helmet';
 
 @Module({
@@ -26,6 +27,7 @@ import helmet from 'helmet';
     AuthModule,
     PostModule,
     CloudModule,
+    ReactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

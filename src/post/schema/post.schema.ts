@@ -4,6 +4,7 @@ import { HydratedDocument, Types } from 'mongoose';
 import { User, UserDocument } from 'src/user/schemas/user.schema';
 import { PrivacyEnum } from 'src/_core/enums/privacy.enum';
 import { Media } from '../interfaces/media.interface';
+import { ReactionType } from 'src/reaction/types/reaction.type';
 
 export type PostDocument = HydratedDocument<Post>;
 @Schema({ timestamps: true })
@@ -18,6 +19,11 @@ export class Post implements IPost {
     default: PrivacyEnum.PUBLIC,
   })
   privacySetting: PrivacyEnum;
+  @Prop({
+    default: {},
+    type: Map,
+  })
+  reactCount?: Map<ReactionType, number>;
   @Prop({
     default: '#FFFFFF',
   })
