@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PostModule } from './post/post.module';
 import { CloudModule } from './cloud/cloud.module';
 import { ReactionModule } from './reaction/reaction.module';
+import { CommentModule } from './comment/comment.module';
 import helmet from 'helmet';
 
 @Module({
@@ -28,6 +29,7 @@ import helmet from 'helmet';
     PostModule,
     CloudModule,
     ReactionModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

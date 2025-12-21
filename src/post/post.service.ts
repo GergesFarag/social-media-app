@@ -4,10 +4,11 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Post } from './schema/post.schema';
-import { JWTPayload } from 'src/_core/interfaces/jwtPayload.interface';
 import { UserService } from 'src/user/user.service';
 import { Media } from './interfaces/media.interface';
 import { CloudService } from 'src/cloud/cloud.service';
+import { ReactionService } from 'src/reaction/reaction.service';
+import { JwtPayload } from 'src/types/jwtPayload';
 
 @Injectable()
 export class PostService {
@@ -15,8 +16,9 @@ export class PostService {
     @InjectModel(Post.name) private postModel: Model<Post>,
     private readonly userService: UserService,
     private readonly cloudService: CloudService,
+    private readonly reactionService: ReactionService,
   ) {}
-  async create(createPostDto: CreatePostDto, currentUser: JWTPayload) {
+  async create(createPostDto: CreatePostDto, currentUser: JwtPayload) {
     const user = await this.userService.getProfile(currentUser);
     if (!user) {
       throw new BadRequestException('Invalid user. Cannot create post.');
@@ -28,19 +30,37 @@ export class PostService {
     return newPost.save();
   }
 
-  async findAll(currentUser: JWTPayload) {
-    return await this.postModel
-      .find()
-      .where('author')
-      .equals(new Types.ObjectId(currentUser.id));
+  async findAll(currentUser: JwtPayload) {
+    const userId = new Types.ObjectId(currentUser.id);
+    const posts = await this.postModel.find().lean();
+
+    return Promise.all(
+      posts.map(async (post) => {
+        const myReactionOnPost =
+          await this.reactionService.findExistingReaction(post._id, userId);
+        if (myReactionOnPost) {
+          return { ...post, myReaction: myReactionOnPost.type };
+        }
+        return post;
+      }),
+    );
   }
 
-  async findOne(id: Types.ObjectId) {
+  async findOne(id: Types.ObjectId, currentUser: JwtPayload) {
+    const userId = new Types.ObjectId(currentUser.id);
     const post = await this.postModel
       .findById(id)
-      .populate('author', '-password -__v');
+      .populate('author', '-password -__v')
+      .lean();
     if (!post) {
       throw new BadRequestException('Post not found.');
+    }
+    const myReactionOnPost = await this.reactionService.findExistingReaction(
+      post._id,
+      userId,
+    );
+    if (myReactionOnPost) {
+      return { ...post, myReaction: myReactionOnPost.type };
     }
     return post;
   }

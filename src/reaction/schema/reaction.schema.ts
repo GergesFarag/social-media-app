@@ -1,10 +1,12 @@
-import { User, UserDocument } from 'src/user/schemas/user.schema';
+import { User } from 'src/user/schemas/user.schema';
 import { IReaction } from '../interfaces/reaction.interface';
 import { reactions, ReactionType } from '../types/reaction.type';
-import { Post, PostDocument } from 'src/post/schema/post.schema';
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Post } from 'src/post/schema/post.schema';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 export type ReactionDocument = HydratedDocument<Reaction>;
+
+@Schema()
 export class Reaction implements IReaction {
   @Prop({
     type: String,
@@ -13,8 +15,8 @@ export class Reaction implements IReaction {
   })
   type: ReactionType;
   @Prop({ type: Types.ObjectId, ref: User.name })
-  user: UserDocument;
+  user: Types.ObjectId;
   @Prop({ type: Types.ObjectId, ref: Post.name })
-  post: PostDocument;
+  post: Types.ObjectId;
 }
 export const ReactionSchema = SchemaFactory.createForClass(Reaction);

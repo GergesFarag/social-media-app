@@ -19,14 +19,22 @@ export class Post implements IPost {
     default: PrivacyEnum.PUBLIC,
   })
   privacySetting: PrivacyEnum;
-  @Prop({
-    default: {},
-    type: Map,
-  })
-  reactCount?: Map<ReactionType, number>;
+
   @Prop({
     default: '#FFFFFF',
   })
   backgroundColor?: string;
+
+  @Prop({
+    type: Object,
+    default: {},
+  })
+  reactions: Record<ReactionType, number>;
+
+  @Prop({
+    type: Number,
+    default: 0,
+  })
+  commentsCount: number;
 }
 export const PostSchema = SchemaFactory.createForClass(Post);

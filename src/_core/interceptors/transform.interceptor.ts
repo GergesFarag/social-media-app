@@ -17,15 +17,17 @@ export class TransformInterceptor<T> implements NestInterceptor {
   ): Observable<ResponseDto<T> | PaginatedResponseDto<T>> {
     return next.handle().pipe(
       map((data) => {
-        if ('meta' in data && 'data' in data && Array.isArray(data.items)) {
+        // Handle paginated responses
+        if ('meta' in data && 'data' in data && Array.isArray(data.data)) {
           return {
             status: 'success',
-            data: plainToInstance(this.dtoClass, data.items, {
+            data: plainToInstance(this.dtoClass, data.data, {
               excludeExtraneousValues: true,
             }),
             meta: data.meta,
           };
         }
+        // Handle single item responses
         return {
           status: 'success',
           data: plainToInstance(this.dtoClass, data, {

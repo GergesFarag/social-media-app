@@ -12,7 +12,6 @@ import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CurrentUser } from 'src/_core/decorators/current-user.decorator';
-import { JWTPayload } from 'src/_core/interfaces/jwtPayload.interface';
 import { Roles } from 'src/_core/decorators/roles.decorator';
 import { RolesEnum } from 'src/_core/enums/roles.enum';
 import { AuthGuard } from 'src/_core/guards/auth.guard';
@@ -22,6 +21,7 @@ import { TransformResponse } from 'src/_core/decorators/transform-response.decor
 import { PostResponseDto } from './dto/post-response.dto';
 import { ParseObjIdPipe } from 'src/_core/pipes/parse-obj-id.pipe';
 import { Media } from './interfaces/media.interface';
+import { JwtPayload } from 'src/types/jwtPayload';
 
 @Controller('post')
 @UseGuards(AuthGuard, RolesGuard)
@@ -33,19 +33,22 @@ export class PostController {
   @Post()
   create(
     @Body() createPostDto: CreatePostDto,
-    @CurrentUser() currentUser: JWTPayload,
+    @CurrentUser() currentUser: JwtPayload,
   ) {
     return this.postService.create(createPostDto, currentUser);
   }
 
   @Get()
-  findAll(@CurrentUser() currentUser: JWTPayload) {
-    return this.postService.findAll(currentUser);
+  findAll(@CurrentUser() user: JwtPayload) {
+    return this.postService.findAll(user);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseObjIdPipe) id: Types.ObjectId) {
-    return this.postService.findOne(id);
+  findOne(
+    @Param('id', ParseObjIdPipe) id: Types.ObjectId,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return this.postService.findOne(id, user);
   }
 
   @Patch(':id/media')

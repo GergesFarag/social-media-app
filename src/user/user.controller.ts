@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { JWTPayload } from 'src/_core/interfaces/jwtPayload.interface';
+import { JwtPayload } from 'src/types/jwtPayload';
 import { CurrentUser } from 'src/_core/decorators/current-user.decorator';
 import { UserProfileResponseDto } from './dto/userProfile-response.dto';
 import { TransformResponse } from 'src/_core/decorators/transform-response.decorator';
@@ -16,7 +16,7 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(RolesEnum.ADMIN)
   @TransformResponse(UserProfileResponseDto)
-  getProfile(@CurrentUser() user: JWTPayload) {
+  getProfile(@CurrentUser() user: JwtPayload) {
     return this.userService.getProfile(user);
   }
 }

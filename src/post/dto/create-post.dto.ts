@@ -29,4 +29,6 @@ export class CreatePostDto {
   @IsHexColor()
   @IsOptional()
   backgroundColor?: string;
+
+  commentsCount: number;
 }

@@ -28,7 +28,7 @@ export class AuthService {
     const user = new this.userModel(newUser);
     const response = await user.save();
     const JWTPayload: JwtPayload = {
-      id: response._id.toString(),
+      id: response._id,
       email: response.email,
       role: response.role,
     };
@@ -49,7 +49,7 @@ export class AuthService {
       throw new BadRequestException('Invalid Credentials');
     }
     const JWTPayload: JwtPayload = {
-      id: existsUser._id.toString(),
+      id: existsUser._id,
       email: existsUser.email,
       role: existsUser.role,
     };
