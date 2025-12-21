@@ -17,7 +17,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
   async signup(dto: SignupDto): Promise<LoginResponseDto> {
-    const isExists = await this.userModel.findOne({ email: dto.email });
+    const isExists = await this.userModel.findOne({
+      email: dto.email,
+      isDeleted: false,
+    });
     if (isExists) {
       throw new BadRequestException('Cannot use these credentials');
     }
@@ -37,7 +40,10 @@ export class AuthService {
   }
 
   async login(dto: LoginDto): Promise<LoginResponseDto> {
-    const existsUser = await this.userModel.findOne({ email: dto.email });
+    const existsUser = await this.userModel.findOne({
+      email: dto.email,
+      isDeleted: false,
+    });
     if (!existsUser) {
       throw new BadRequestException('Invalid Credentials');
     }

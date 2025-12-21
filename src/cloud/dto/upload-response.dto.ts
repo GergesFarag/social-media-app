@@ -1,5 +1,5 @@
 import { Expose, Transform } from 'class-transformer';
-import { Media } from 'src/post/interfaces/media.interface';
+import { Media } from 'src/_core/interfaces/media.interface';
 
 export class UploadResponseDto implements Media {
   @Expose()

@@ -20,7 +20,7 @@ import { Types } from 'mongoose';
 import { TransformResponse } from 'src/_core/decorators/transform-response.decorator';
 import { PostResponseDto } from './dto/post-response.dto';
 import { ParseObjIdPipe } from 'src/_core/pipes/parse-obj-id.pipe';
-import { Media } from './interfaces/media.interface';
+import { Media } from '../_core/interfaces/media.interface';
 import { JwtPayload } from 'src/types/jwtPayload';
 
 @Controller('post')

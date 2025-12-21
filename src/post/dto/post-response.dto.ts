@@ -4,7 +4,7 @@ import { IPost } from '../interfaces/post.interface';
 import { Expose, Transform } from 'class-transformer';
 import { BaseDto } from 'src/_core/dto/base.dto';
 import { PostDocument } from '../schema/post.schema';
-import { Media } from '../interfaces/media.interface';
+import { Media } from '../../_core/interfaces/media.interface';
 import { ReactionType } from 'src/reaction/types/reaction.type';
 
 export class PostResponseDto extends BaseDto implements IPost {

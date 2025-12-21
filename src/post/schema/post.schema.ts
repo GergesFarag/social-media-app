@@ -3,7 +3,7 @@ import { IPost } from '../interfaces/post.interface';
 import { HydratedDocument, Types } from 'mongoose';
 import { User, UserDocument } from 'src/user/schemas/user.schema';
 import { PrivacyEnum } from 'src/_core/enums/privacy.enum';
-import { Media } from '../interfaces/media.interface';
+import { Media } from '../../_core/interfaces/media.interface';
 import { ReactionType } from 'src/reaction/types/reaction.type';
 
 export type PostDocument = HydratedDocument<Post>;

@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Post } from './schema/post.schema';
 import { UserService } from 'src/user/user.service';
-import { Media } from './interfaces/media.interface';
+import { Media } from '../_core/interfaces/media.interface';
 import { CloudService } from 'src/cloud/cloud.service';
 import { ReactionService } from 'src/reaction/reaction.service';
 import { JwtPayload } from 'src/types/jwtPayload';

@@ -7,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 import { PrivacyEnum } from 'src/_core/enums/privacy.enum';
-import { Media } from '../interfaces/media.interface';
+import { Media } from '../../_core/interfaces/media.interface';
 
 export class CreatePostDto {
   @IsString()
