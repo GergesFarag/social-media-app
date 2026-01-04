@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IUser } from '../interfaces/user.interface';
 import { RolesEnum } from '../../_core/enums/roles.enum';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { MediaType } from 'src/_core/interfaces/media.interface';
+import { ConversationDoc } from 'src/conversation/schema/conversation.schema';
+
 export type UserDocument = HydratedDocument<User>;
 @Schema()
 export class User implements IUser {
@@ -62,5 +64,20 @@ export class User implements IUser {
     default: false,
   })
   isDeleted: boolean;
+
+  @Prop({
+    type: [Types.ObjectId],
+    ref: 'User',
+    default: [],
+  })
+  friends: Types.ObjectId[];
+
+  @Prop({
+    type: [Types.ObjectId],
+    ref: 'Conversation',
+    default: [],
+  })
+  conversations: Types.ObjectId[];
 }
+
 export const UserSchema = SchemaFactory.createForClass(User);

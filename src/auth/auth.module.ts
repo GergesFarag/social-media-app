@@ -17,7 +17,11 @@ import { ConfigService } from '@nestjs/config';
         return {
           global: true,
           secret: configService.get<string>('JWT_SECRET'),
-          signOptions: { expiresIn: '5h' },
+          signOptions: {
+            expiresIn: configService.get<string>(
+              'JWT_EXPIRE',
+            ) as `${number}${'s' | 'm' | 'h' | 'd'}`,
+          },
         };
       },
     }),

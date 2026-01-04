@@ -6,3 +6,7 @@ export interface IReaction {
   user: Types.ObjectId;
   post: Types.ObjectId;
 }
+export interface IMessageReaction {
+  type: ReactionType;
+  user: Types.ObjectId;
+}

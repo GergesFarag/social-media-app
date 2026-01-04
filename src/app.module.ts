@@ -9,6 +9,9 @@ import { PostModule } from './post/post.module';
 import { CloudModule } from './cloud/cloud.module';
 import { ReactionModule } from './reaction/reaction.module';
 import { CommentModule } from './comment/comment.module';
+import { FriendModule } from './friend/friend.module';
+import { MessageModule } from './message/message.module';
+import { ConversationModule } from './conversation/conversation.module';
 import helmet from 'helmet';
 
 @Module({
@@ -30,6 +33,9 @@ import helmet from 'helmet';
     CloudModule,
     ReactionModule,
     CommentModule,
+    FriendModule,
+    ConversationModule,
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

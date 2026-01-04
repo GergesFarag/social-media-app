@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IPost } from '../interfaces/post.interface';
 import { HydratedDocument, Types } from 'mongoose';
-import { User, UserDocument } from 'src/user/schemas/user.schema';
+import { UserDocument } from 'src/user/schemas/user.schema';
 import { PrivacyEnum } from 'src/_core/enums/privacy.enum';
 import { Media } from '../../_core/interfaces/media.interface';
 import { ReactionType } from 'src/reaction/types/reaction.type';
@@ -11,7 +11,7 @@ export type PostDocument = HydratedDocument<Post>;
 export class Post implements IPost {
   @Prop()
   content: string;
-  @Prop({ type: Types.ObjectId, ref: User.name })
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   author: UserDocument;
   @Prop({ default: [] })
   mediaUrls: Media[];

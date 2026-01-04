@@ -1,25 +1,23 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { User } from 'src/user/schemas/user.schema';
-import { Post } from 'src/post/schema/post.schema';
 
 export type CommentDocument = HydratedDocument<Comment>;
 
 @Schema({ timestamps: true })
 export class Comment {
-  @Prop({ type: Types.ObjectId, ref: Post.name, required: true, index: true })
+  @Prop({ type: Types.ObjectId, ref: 'Post', required: true, index: true })
   post: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: User.name, required: true })
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   author: Types.ObjectId;
 
   @Prop({ type: String, maxLength: 2000, required: true })
   content: string;
 
-  @Prop({ type: Types.ObjectId, ref: Comment.name, default: null })
+  @Prop({ type: Types.ObjectId, ref: 'Comment', default: null })
   parentComment: Types.ObjectId | null;
 
-  @Prop({ type: Types.ObjectId, ref: Comment.name, default: null, index: true })
+  @Prop({ type: Types.ObjectId, ref: 'Comment', default: null, index: true })
   rootComment: Types.ObjectId | null;
 
   @Prop({ type: Number, default: 0, max: 5 })
