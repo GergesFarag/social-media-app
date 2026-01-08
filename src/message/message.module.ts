@@ -3,8 +3,9 @@ import { MessageService } from './message.service';
 import { MessageController } from './message.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Message, MessageSchema } from './schema/message.schema';
-import { ConversationModule } from 'src/conversation/conversation.module';
-import { AuthModule } from 'src/auth/auth.module';
+import { ConversationModule } from '../conversation/conversation.module';
+import { AuthModule } from '../auth/auth.module';
+import { MessageGateway } from './message.gateway';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { AuthModule } from 'src/auth/auth.module';
     ConversationModule,
   ],
   controllers: [MessageController],
-  providers: [MessageService],
+  providers: [MessageService, MessageGateway],
   exports: [MessageService],
 })
 export class MessageModule {}

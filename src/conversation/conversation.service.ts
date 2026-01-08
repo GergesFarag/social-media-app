@@ -170,7 +170,7 @@ export class ConversationService {
 
   async updateLastMessage(message: MessageDoc) {
     const conversation = await this.conversationModel.findByIdAndUpdate(
-      message.conversation._id,
+      message.conversation,
       {
         lastMessage: message._id,
         lastMessageAt: message.createdAt,
