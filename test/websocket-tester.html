@@ -131,6 +131,18 @@
         log(`📩 NEW MESSAGE: ${JSON.stringify(message, null, 2)}`, 'message');
       });
 
+      socket.on('updateMessage' , (message) => {
+        log(`📩 UPDATED MESSAGE: ${JSON.stringify(message, null, 2)}`, 'message');
+      })
+
+      socket.on('deleteMessage' , (message) => {
+        log(`📩 DELETED MESSAGE: ${JSON.stringify(message, null, 2)}`, 'message');
+      })
+
+      socket.on('markAsSeenMessages' , (message) => {
+        log(`📩 DELETED MESSAGE: ${JSON.stringify(message, null, 2)}`, 'message');
+      })
+
       socket.on('userTyping', (data) => {
         log(`⌨️ User ${data.userId} is ${data.isTyping ? 'typing...' : 'stopped typing'}`, 'info');
       });

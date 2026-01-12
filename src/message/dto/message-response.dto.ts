@@ -1,10 +1,12 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { MessageType } from '../types/message-type.enum';
 import { MessageStatus } from '../types/message-status.enum';
 import { IPagination } from 'src/_core/interfaces/pagination.interface';
+import { Message, MessageDoc } from '../schema/message.schema';
 
 class SenderDto {
   @Expose()
+  @Transform(({ obj }) => obj._id.toString())
   _id: string;
 
   @Expose()
@@ -19,6 +21,7 @@ class SenderDto {
 
 class ReplyToDto {
   @Expose()
+  @Transform(({ obj }) => obj._id.toString())
   _id: string;
 
   @Expose()
@@ -31,9 +34,11 @@ class ReplyToDto {
 
 export class MessageResponseDto {
   @Expose()
+  @Transform(({ obj }) => obj._id.toString())
   _id: string;
 
   @Expose()
+  @Transform(({ obj }) => obj.conversation.toString())
   conversation: string;
 
   @Expose()
@@ -60,13 +65,16 @@ export class MessageResponseDto {
   isEdited: boolean;
 
   @Expose()
+  isDeleted: boolean;
+
+  @Expose()
   isSystem: boolean;
 
   @Expose()
-  createdAt: Date;
+  createdAt?: Date;
 
   @Expose()
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 export class CreateMessageResponseDto {

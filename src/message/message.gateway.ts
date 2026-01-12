@@ -9,6 +9,8 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { MessageResponseDto } from './dto/message-response.dto';
+import { JwtService } from '@nestjs/jwt';
+import { UnauthorizedException } from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
@@ -21,11 +23,17 @@ export class MessageGateway
   @WebSocketServer()
   server: Server;
 
+  constructor(private jwtService: JwtService) {}
+
   @SubscribeMessage('joinConversation')
   async handleJoinConversation(
     @MessageBody() data: { conversationId: string },
     @ConnectedSocket() client: Socket,
   ) {
+    const token: string = client.handshake.auth.token;
+    if (!token) throw new UnauthorizedException('No token provided');
+    const isVerified = await this.jwtService.verifyAsync(token);
+    if (!isVerified) throw new UnauthorizedException('Invalid token provided');
     await client.join(data.conversationId);
     console.log(
       `Client ${client.id} joined conversation ${data.conversationId}`,
@@ -43,15 +51,20 @@ export class MessageGateway
     return { event: 'left', conversationId: data.conversationId };
   }
 
-  sendMessageToConversation(
-    conversationId: string,
-    message: MessageResponseDto,
-  ) {
+  sendMessage(conversationId: string, message: MessageResponseDto) {
     this.server.to(conversationId).emit('newMessage', message);
   }
 
   updateMessage(conversationId: string, message: MessageResponseDto) {
     this.server.to(conversationId).emit('updateMessage', message);
+  }
+
+  deleteMessage(conversationId: string, message: MessageResponseDto) {
+    this.server.to(conversationId).emit('deleteMessage', message);
+  }
+
+  markAsRead(conversationId: string, messages: MessageResponseDto[]) {
+    this.server.to(conversationId).emit('markAsReadMessage', messages);
   }
 
   @SubscribeMessage('typing')

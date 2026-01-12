@@ -6,7 +6,7 @@ import {
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Message, MessageDoc } from './schema/message.schema';
+import { Message } from './schema/message.schema';
 import { Model, Types } from 'mongoose';
 import { JwtPayload } from 'src/types/jwtPayload';
 import { ConversationService } from 'src/conversation/conversation.service';
@@ -39,7 +39,7 @@ export class MessageService {
     const responseMessage = plainToInstance(MessageResponseDto, message, {
       excludeExtraneousValues: true,
     });
-    this.messageGateway.sendMessageToConversation(
+    this.messageGateway.sendMessage(
       message.conversation.toString(),
       responseMessage,
     );
@@ -52,13 +52,26 @@ export class MessageService {
     query: IQuery,
   ) {
     const { limit = 20, page = 1, sort = 'newest' } = query;
-    await this.conversationService.findOne(convId, currentUser);
+    await this.validateExistsingConv(currentUser, undefined, convId);
     const messages = await this.messageModel
       .find({ conversation: convId, isDeleted: false })
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(sortingMap[sort]);
-    return messages;
+    const total = await this.messageModel.find({
+      conversation: convId,
+      isDeleted: false,
+    });
+    return {
+      status: 'success',
+      data: messages,
+      meta: {
+        page,
+        limit,
+        totalItems: total.length,
+        totalPages: Math.ceil(total.length / limit),
+      },
+    };
   }
 
   async update(
@@ -70,6 +83,7 @@ export class MessageService {
     const message = await this.messageModel.findOneAndUpdate(
       { _id: messageId, sender: currentUser.id },
       updateMessageDto,
+      { new: true },
     );
     const responseMessage = plainToInstance(MessageResponseDto, message, {
       excludeExtraneousValues: true,
@@ -86,8 +100,16 @@ export class MessageService {
     const message = await this.messageModel.findOneAndUpdate(
       { _id: messageId, sender: currentUser.id },
       { isDeleted: true },
+      { new: true },
     );
     if (!message) throw new UnauthorizedException('cannot update this message');
+    const responseMessage = plainToInstance(MessageResponseDto, message, {
+      excludeExtraneousValues: true,
+    });
+    this.messageGateway.deleteMessage(
+      message.conversation.toString(),
+      responseMessage,
+    );
     return message;
   }
 
@@ -99,10 +121,20 @@ export class MessageService {
       },
       { $addToSet: { readBy: currentUser.id }, status: MessageStatus.READ },
     );
+    const messages = await this.messageModel.find({
+      conversation: convId,
+      readBy: currentUser.id,
+    });
+    const responseMessagesPromises = messages.map((message) => {
+      return plainToInstance(MessageResponseDto, message, {
+        excludeExtraneousValues: true,
+      });
+    });
+    this.messageGateway.markAsRead(convId.toString(), responseMessagesPromises);
     return true;
   }
 
-  private async validateExistsingConv(
+  async validateExistsingConv(
     currentUser: JwtPayload,
     messageId?: Types.ObjectId,
     convId?: Types.ObjectId,

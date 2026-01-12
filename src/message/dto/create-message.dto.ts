@@ -23,5 +23,5 @@ export class CreateMessageDto {
 
   @IsMongoId()
   @IsOptional()
-  replyTo: Types.ObjectId;
+  replyTo?: Types.ObjectId;
 }
