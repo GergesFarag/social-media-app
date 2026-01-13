@@ -4,7 +4,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Message } from './schema/message.schema';
 import { ConversationService } from 'src/conversation/conversation.service';
 import { MessageGateway } from './message.gateway';
-import { ObjectId, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { MessageType } from './types/message-type.enum';
 import { JwtPayload } from 'src/types/jwtPayload';
@@ -12,8 +12,6 @@ import { RolesEnum } from 'src/_core/enums/roles.enum';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageStatus } from './types/message-status.enum';
-import { plainToInstance } from 'class-transformer';
-import { MessageResponseDto } from './dto/message-response.dto';
 
 describe('MessageService', () => {
   let service: MessageService;
@@ -120,16 +118,6 @@ describe('MessageService', () => {
       const mockMessages = [
         { _id: new Types.ObjectId(), content: 'Hello', conversation: convId },
       ];
-      const mockResponse = {
-        data: mockMessages,
-        status: 'success',
-        meta: {
-          totalItems: 20,
-          totalPages: 5,
-          page: 1,
-          limit: 10,
-        },
-      };
       mockConversationService.findOne.mockResolvedValue({ _id: convId });
 
       mockMessageModel.find.mockReturnValue({

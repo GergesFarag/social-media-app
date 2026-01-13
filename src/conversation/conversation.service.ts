@@ -2,10 +2,11 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, Mongoose, Types } from 'mongoose';
 import { DirectStrategy } from './strategies/direct.strategy';
 import { GroupStrategy } from './strategies/group.strategy';
 import { IConversationStrategy } from './strategies/_conversation.strategy';
@@ -16,6 +17,7 @@ import { Conversation, ConversationDoc } from './schema/conversation.schema';
 import { IQuery, sortingMap } from 'src/_core/interfaces/query.interface';
 import { PaginatedResponseDto } from 'src/_core/dto/response.dto';
 import { Message, MessageDoc } from 'src/message/schema/message.schema';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class ConversationService {
@@ -25,7 +27,8 @@ export class ConversationService {
     private userModel: Model<User>,
     @InjectModel(Conversation.name)
     private conversationModel: Model<Conversation>,
-    @InjectModel(Message.name) private messageModel: Model<Message>,
+    @InjectModel(Message.name)
+    private messageModel: Model<Message>,
     private directStrategy: DirectStrategy,
     private groupStrategy: GroupStrategy,
   ) {
@@ -168,7 +171,9 @@ export class ConversationService {
     return conversation;
   }
 
-  async updateLastMessage(message: MessageDoc) {
+  async updateLastMessage(messageId: Types.ObjectId) {
+    const message = await this.messageModel.findById(messageId);
+    if (!message) throw new NotFoundException('invalid message id');
     const conversation = await this.conversationModel.findByIdAndUpdate(
       message.conversation,
       {
@@ -180,7 +185,7 @@ export class ConversationService {
     return true;
   }
 
-  private getStartegy(type: ConversationType) {
+  getStartegy(type: ConversationType) {
     return this.strategies.get(type)!;
   }
 }
