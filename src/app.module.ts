@@ -12,6 +12,7 @@ import { CommentModule } from './comment/comment.module';
 import { FriendModule } from './friend/friend.module';
 import { MessageModule } from './message/message.module';
 import { ConversationModule } from './conversation/conversation.module';
+import { MailModule } from './mail/mail.module';
 import helmet from 'helmet';
 
 @Module({
@@ -36,6 +37,7 @@ import helmet from 'helmet';
     FriendModule,
     ConversationModule,
     MessageModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

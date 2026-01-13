@@ -7,6 +7,7 @@ import { LoggerMiddleware } from '../_core/middlewares/logger.middleware';
 import { BcryptService } from '../_core/services/bcrypt.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { MailService } from 'src/mail/mail.service';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, BcryptService],
+  providers: [AuthService, BcryptService, MailService],
   exports: [AuthService, BcryptService, JwtModule],
 })
 export class AuthModule implements NestModule {

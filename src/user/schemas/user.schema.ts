@@ -3,7 +3,6 @@ import { IUser } from '../interfaces/user.interface';
 import { RolesEnum } from '../../_core/enums/roles.enum';
 import { HydratedDocument, Types } from 'mongoose';
 import { MediaType } from 'src/_core/interfaces/media.interface';
-import { ConversationDoc } from 'src/conversation/schema/conversation.schema';
 
 export type UserDocument = HydratedDocument<User>;
 @Schema()
@@ -12,6 +11,19 @@ export class User implements IUser {
   username: string;
   @Prop({ unique: true })
   email: string;
+
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  isEmailVerified: boolean;
+
+  @Prop({
+    type: String,
+    default: null,
+  })
+  emailVerificationToken: string | null;
+
   @Prop()
   password: string;
   @Prop({

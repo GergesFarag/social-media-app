@@ -35,7 +35,7 @@ export class MessageService {
       sender: currentUser.id,
     });
 
-    await this.conversationService.updateLastMessage(message);
+    await this.conversationService.updateLastMessage(message._id);
     const responseMessage = plainToInstance(MessageResponseDto, message, {
       excludeExtraneousValues: true,
     });

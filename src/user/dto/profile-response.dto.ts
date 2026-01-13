@@ -43,4 +43,6 @@ export class UserProfileResponseDto extends BaseDto implements IUser {
 
   password: string;
   isDeleted?: boolean | undefined;
+  isEmailVerified: boolean;
+  emailVerificationToken: string | null;
 }
